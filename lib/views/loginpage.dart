@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:luminar_api/models/user.dart';
 import 'package:luminar_api/services/apiservice.dart';
 import 'package:luminar_api/services/userservice.dart';
 import 'package:luminar_api/views/homescreen.dart';
+import 'package:luminar_api/views/signpage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,8 +36,14 @@ class _LoginPageState extends State<LoginPage> {
 
       // Simulate login or perform your API call here
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(const SnackBar(content: Text('Login Successful!')));
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => Homescreen()),
+      );
     }
   }
 
@@ -142,7 +148,11 @@ class _LoginPageState extends State<LoginPage> {
                         const Text("Don't have an account?"),
                         TextButton(
                           onPressed: () {
-                            // Navigate to Signup screen
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpPage(),
+                              ),
+                            );
                           },
                           child: const Text("Sign Up"),
                         ),
