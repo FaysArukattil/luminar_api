@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:luminar_api/models/productsall/resp_productsall.dart';
 import 'package:luminar_api/models/user.dart';
 
 class Apiservice {
@@ -25,7 +26,9 @@ class Apiservice {
       logger.w(response.body);
       if (response.statusCode == 200) {
         var json = jsonDecode(response.body);
-        var user = User.fromJson(json);
+        // Check if response has a 'data' field, otherwise use the json directly
+        var userData = json['data'] ?? json;
+        var user = User.fromJson(userData);
         return user;
       }
     } catch (e) {
@@ -34,33 +37,62 @@ class Apiservice {
     return null;
   }
 
-  Future<User?> signup({
-    required String name,
+  Future<bool?> register({
     required String email,
     required String password,
+    required String name,
+    required String phone,
+    required String pincode,
+    required String place,
   }) async {
-    Uri url = Uri.parse("$baseurl/signup");
+    Uri url = Uri.parse("$baseurl/registration/");
+    var headers = {
+      "accept": "application/json",
+      "Content-Type": "application/json",
+    };
+    var body = jsonEncode({
+      "name": name,
+      "phone": phone,
+      "place": place,
+      "pincode": pincode,
+      "email": email,
+      "password": password,
+    });
+    logger.i("$baseurl/registration/");
+    logger.i("hedders::$headers");
+    logger.i("body::$body");
     try {
-      var headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-      };
-      var body = jsonEncode({
-        "name": name,
-        "email": email,
-        "password": password,
-      });
-
-      logger.i("$baseurl/signup");
-      logger.i("headers::$headers");
-      logger.i("body:$body");
-
       final response = await http.post(url, headers: headers, body: body);
-      logger.w(response.body);
+      logger.i(response.body);
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      logger.e("$e");
+      return false;
+    }
+  }
+
+  Future<List<Data>?> getproducts(String token) async {
+    Uri url = Uri.parse("$baseurl/products-all/");
+    var headers = {
+      "accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
+
+    logger.i("headers::$headers");
+    logger.i("url::$baseurl");
+    try {
+      final response = await http.get(url, headers: headers);
+      logger.i(response.body);
       if (response.statusCode == 200) {
         var json = jsonDecode(response.body);
-        var user = User.fromJson(json);
-        return user;
+        var resp = RespProductsall.fromJson(json);
+        logger.i("Products Fetched Successfully");
+
+        return resp.data;
       }
     } catch (e) {
       logger.e("E:::::::$e");

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:luminar_api/models/user.dart';
 import 'package:luminar_api/services/apiservice.dart';
-import 'package:luminar_api/services/userservice.dart';
+// ignore: unused_import
 import 'package:luminar_api/views/homescreen.dart';
+import 'package:luminar_api/views/loginpage.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -32,28 +32,41 @@ class _SignUpPageState extends State<SignUpPage> {
   void _submit() async {
     if (_formKey.currentState!.validate()) {
       Apiservice apiservice = Apiservice();
-      User? user = await apiservice.signup(
+      bool? success = await apiservice.register(
         name: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        place: _placeController.text.trim(),
+        pincode: _pincodeController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      if (user != null) {
-        await UserService.saveUser(user);
-      }
-
       // ignore: use_build_context_synchronously
       FocusScope.of(context).unfocus();
-      ScaffoldMessenger.of(
-        // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Signup form is valid')));
 
-      Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
-        context,
-        MaterialPageRoute(builder: (context) => Homescreen()),
-      );
+      if (success == true) {
+        ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
+          context,
+        ).showSnackBar(
+          const SnackBar(content: Text('Registration successful!')),
+        );
+
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
+          context,
+        ).showSnackBar(
+          const SnackBar(
+            content: Text('Registration failed. Please try again.'),
+          ),
+        );
+      }
     }
   }
 

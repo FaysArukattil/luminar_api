@@ -3,7 +3,7 @@ import 'package:luminar_api/models/user.dart';
 import 'package:luminar_api/services/apiservice.dart';
 import 'package:luminar_api/services/userservice.dart';
 import 'package:luminar_api/views/homescreen.dart';
-import 'package:luminar_api/views/signpage.dart';
+import 'package:luminar_api/views/signuppage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,18 +32,22 @@ class _LoginPageState extends State<LoginPage> {
 
       if (user != null) {
         await UserService.saveUser(user);
-      }
 
-      // Simulate login or perform your API call here
-      ScaffoldMessenger.of(
+        ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Login Successful!')));
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => Homescreen()),
+        );
+      } else {
         // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Login Successful!')));
-      Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
-        context,
-        MaterialPageRoute(builder: (context) => Homescreen()),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login Failed. Please try again.')),
+        );
+      }
     }
   }
 
