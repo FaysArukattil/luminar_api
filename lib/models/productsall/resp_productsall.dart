@@ -62,8 +62,14 @@ class Data {
     if (json["description"] is String) {
       description = json["description"];
     }
-    if (json["price"] is int) {
-      price = json["price"];
+    if (json["price"] != null) {
+      if (json["price"] is int) {
+        price = json["price"];
+      } else if (json["price"] is double) {
+        price = (json["price"] as double).toInt();
+      } else if (json["price"] is String) {
+        price = int.tryParse(json["price"]);
+      }
     }
     if (json["stock"] is int) {
       stock = json["stock"];

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:luminar_api/models/productsall/resp_productsall.dart';
 import 'package:luminar_api/services/apiservice.dart';
 import 'package:luminar_api/services/userservice.dart';
+import 'package:luminar_api/views/loginpage.dart';
+import 'package:luminar_api/views/productsaddpage.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -27,9 +29,61 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
+  Future<void> _logout() async {
+    await UserService.clearUser();
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _body());
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Productsaddpage()),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _logout();
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: _body(),
+    );
   }
 
   Widget _body() {
@@ -40,9 +94,13 @@ class _HomescreenState extends State<Homescreen> {
         itemCount: productlist!.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(productlist![index].name!),
-            subtitle: Text(productlist![index].description!),
-            trailing: Text('\$${productlist![index].price}'),
+            title: Text(productlist![index].name ?? 'No Name'),
+            subtitle: Text(productlist![index].description ?? 'No Description'),
+            trailing: Text(
+              productlist![index].price != null
+                  ? '\$${productlist![index].price}'
+                  : 'N/A',
+            ),
           );
         },
       );
