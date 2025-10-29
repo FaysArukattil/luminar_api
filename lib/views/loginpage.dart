@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:luminar_api/models/user.dart';
 import 'package:luminar_api/services/apiservice.dart';
 import 'package:luminar_api/services/userservice.dart';
-import 'package:luminar_api/views/homescreen.dart';
+import 'package:luminar_api/views/dashboardscreen.dart';
 import 'package:luminar_api/views/signuppage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           // ignore: use_build_context_synchronously
           context,
-          MaterialPageRoute(builder: (context) => Homescreen()),
+          MaterialPageRoute(builder: (context) => const Dashboardscreen()),
         );
       } else {
         // ignore: use_build_context_synchronously

@@ -3,6 +3,8 @@ import 'package:luminar_api/services/apiservice.dart';
 // ignore: unused_import
 import 'package:luminar_api/views/homescreen.dart';
 import 'package:luminar_api/views/loginpage.dart';
+import 'package:luminar_api/services/userservice.dart';
+import 'package:luminar_api/models/user.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -45,6 +47,12 @@ class _SignUpPageState extends State<SignUpPage> {
       FocusScope.of(context).unfocus();
 
       if (success == true) {
+        // Save minimal user info so Profile can render after signup
+        await UserService.saveUser(User(
+          name: _nameController.text.trim(),
+          place: _placeController.text.trim(),
+          email: _emailController.text.trim(),
+        ));
         ScaffoldMessenger.of(
           // ignore: use_build_context_synchronously
           context,

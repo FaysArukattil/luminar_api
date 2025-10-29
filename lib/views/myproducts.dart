@@ -2,30 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:luminar_api/models/productsall/resp_productsall.dart';
 import 'package:luminar_api/services/apiservice.dart';
 import 'package:luminar_api/services/userservice.dart';
-import 'package:luminar_api/views/loginpage.dart';
-import 'package:luminar_api/views/productsaddpage.dart';
 
-class Homescreen extends StatefulWidget {
-  const Homescreen({super.key});
+class Myproducts extends StatefulWidget {
+  const Myproducts({super.key});
 
   @override
-  State<Homescreen> createState() => _HomescreenState();
+  State<Myproducts> createState() => _MyproductsState();
 }
 
-class _HomescreenState extends State<Homescreen> {
+class _MyproductsState extends State<Myproducts> {
   List<Data>? productlist;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    fetch();
+    _fetch();
   }
 
-  Future<void> fetch() async {
-    var user = await UserService.getUser();
-    if (user != null && user.access != null) {
-      productlist = await Apiservice().getproducts(user.access!);
+  Future<void> _fetch() async {
+    final user = await UserService.getUser();
+    if (user?.access != null) {
+      productlist = await Apiservice().myproducts(user!.access!);
     } else {
       productlist = [];
     }
@@ -34,68 +32,20 @@ class _HomescreenState extends State<Homescreen> {
     });
   }
 
-  Future<void> _logout() async {
-    await UserService.clearUser();
-    if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-        (route) => false,
-      );
-    }
-  }
-
   Future<void> _refresh() async {
-    setState(() => _loading = true);
-    await fetch();
+    setState(() {
+      _loading = true;
+    });
+    await _fetch();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Productsaddpage()),
-              );
-            },
-            icon: Icon(Icons.add),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _logout();
-                      },
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('My Products')),
       body: _body(),
     );
+  
   }
-
   Widget _body() {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
@@ -106,9 +56,9 @@ class _HomescreenState extends State<Homescreen> {
         child: ListView(
           children: const [
             SizedBox(height: 120),
-            Icon(Icons.store_mall_directory_outlined, size: 64, color: Colors.grey),
+            Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 12),
-            Center(child: Text('No products available')),
+            Center(child: Text('No products yet')),
           ],
         ),
       );
@@ -158,4 +108,5 @@ class _HomescreenState extends State<Homescreen> {
       ),
     );
   }
+
 }

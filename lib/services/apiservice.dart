@@ -161,4 +161,30 @@ class Apiservice {
       return false;
     }
   }
+
+  Future<List<Data>?> myproducts(String token) async {
+    Uri url = Uri.parse("$baseurl/my-products/");
+    var headers = {
+      "accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
+
+    logger.i("headers::$headers");
+    logger.i("url::$baseurl");
+    try {
+      final response = await http.get(url, headers: headers);
+      logger.i(response.body);
+      if (response.statusCode == 200) {
+        var json = jsonDecode(response.body);
+        var resp = RespProductsall.fromJson(json);
+        logger.i("Products Fetched Successfully");
+
+        return resp.data;
+      }
+    } catch (e) {
+      logger.e("E:::::::$e");
+    }
+    return null;
+  }
 }

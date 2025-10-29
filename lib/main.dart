@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:luminar_api/services/userservice.dart';
-import 'package:luminar_api/views/homescreen.dart';
 import 'package:luminar_api/views/loginpage.dart';
+import 'package:luminar_api/views/dashboardscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +38,33 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: ' Luminar Api',
       theme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        scaffoldBackgroundColor: Colors.grey[100],
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 3,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          margin: const EdgeInsets.all(8),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          type: BottomNavigationBarType.fixed,
+          elevation: 8,
+          selectedIconTheme: IconThemeData(size: 26),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          ),
+        ),
       ),
       home: _isLoading
           ? const Scaffold(
@@ -47,7 +73,7 @@ class _MyAppState extends State<MyApp> {
               ),
             )
           : _isLoggedIn
-              ? const Homescreen()
+              ? const Dashboardscreen()
               : const LoginPage(),
     );
   }
