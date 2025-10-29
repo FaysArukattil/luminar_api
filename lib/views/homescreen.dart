@@ -47,7 +47,7 @@ class _HomescreenState extends State<Homescreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => Productsaddpage()),
               );
@@ -94,6 +94,14 @@ class _HomescreenState extends State<Homescreen> {
         itemCount: productlist!.length,
         itemBuilder: (context, index) {
           return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: productlist![index].imageUrl != null
+                  ? NetworkImage(productlist![index].imageUrl!)
+                  : null,
+              child: productlist![index].imageUrl == null
+                  ? const Icon(Icons.image_not_supported)
+                  : null,
+            ),
             title: Text(productlist![index].name ?? 'No Name'),
             subtitle: Text(productlist![index].description ?? 'No Description'),
             trailing: Text(
