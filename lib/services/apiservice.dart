@@ -116,7 +116,7 @@ class Apiservice {
 
     var headers = {
       "accept": "application/json",
-      "Authorization": "Bearer ${await UserService.getAccessToken()}",
+      "Authorization": "Bearer ${await userService.getAccessToken()}",
     };
 
     var request = http.MultipartRequest('POST', url);
@@ -186,5 +186,90 @@ class Apiservice {
       logger.e("E:::::::$e");
     }
     return null;
+  }
+
+  Future<bool> deleteProduct({required String id}) async {
+    Uri url = Uri.parse("$baseurl/product-delete/$id/");
+    var headers = {
+      "accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer ${await userService.getAccessToken()}",
+    };
+
+    logger.i("headers::$headers");
+    logger.i("url::$baseurl/product-delete/$id/");
+    try {
+      final response = await http.delete(url, headers: headers);
+      logger.i(response.body);
+      if (response.statusCode == 200) {
+        logger.i("Products deleted Successfully");
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      logger.e("E:::::::$e");
+      return false;
+    }
+  }
+
+  Future<bool> editproducts({
+    required num id,
+    required String name,
+    required String description,
+    required String price,
+    required String stock,
+    required String category,
+    File? image,
+  }) async {
+    Uri url = Uri.parse("$baseurl/product-update/$id/");
+
+    var headers = {
+      "accept": "application/json",
+      "Authorization": "Bearer ${await userService.getAccessToken()}",
+    };
+
+    var request = http.MultipartRequest('PUT', url);
+    request.headers.addAll(headers);
+    request.fields['name'] = name;
+    request.fields['description'] = description;
+    request.fields['price'] = price;
+    request.fields['stock'] = stock;
+    request.fields['category'] = category;
+
+    if (image != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          filename: image.path.split("/").last,
+        ),
+      );
+    }
+
+    logger.i("URL: $url");
+    logger.i("Headers: $headers");
+    logger.i("Fields: ${request.fields}");
+
+    try {
+      var streamresponse = await request.send();
+      logger.i("Status Code: ${streamresponse.statusCode}");
+
+      if (streamresponse.statusCode >= 200 &&
+          streamresponse.statusCode <= 299) {
+        var resp = await http.Response.fromStream(streamresponse);
+        logger.i("Response: ${resp.body}");
+
+        return true;
+      } else {
+        var resp = await http.Response.fromStream(streamresponse);
+        logger.e("Error Response: ${resp.body}");
+        return false;
+      }
+    } catch (e) {
+      logger.e("E:::::::$e");
+      return false;
+    }
   }
 }

@@ -52,7 +52,7 @@ class UserService {
   }
 
   /// Get access token from stored user
-  static Future<String?> getAccessToken() async {
+  Future<String?> getAccessToken() async {
     final user = await getUser();
     return user?.access;
   }

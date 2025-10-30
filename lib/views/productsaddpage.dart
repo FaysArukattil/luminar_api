@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:luminar_api/services/apiservice.dart';
-import 'package:luminar_api/views/homescreen.dart';
+import 'package:luminar_api/views/Dashboardscreen.dart';
 
 class Productsaddpage extends StatefulWidget {
   const Productsaddpage({super.key});
@@ -50,7 +50,7 @@ class _ProductsaddpageState extends State<Productsaddpage> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => Homescreen()),
+                MaterialPageRoute(builder: (context) => Dashboardscreen()),
               );
             },
             icon: Icon(Icons.arrow_back),
@@ -324,7 +324,7 @@ class _ProductsaddpageState extends State<Productsaddpage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Homescreen(),
+                                builder: (context) => Dashboardscreen(),
                               ),
                             );
                           }
